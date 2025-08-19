@@ -9,19 +9,37 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.31.1",
+    "@google/genai": "^1.14.0",
+    "@google/generative-ai": "^0.24.1",
+    "@inngest/agent-kit": "^0.9.0",
+    "@langchain/core": "^0.3.71",
+    "@langchain/google-genai": "^0.2.16",
+    "@langchain/google-vertexai": "^0.2.16",
+    "@langchain/openai": "^0.6.7",
+    "@langchain/pinecone": "^0.2.0",
+    "@octokit/rest": "^22.0.0",
+    "@pinecone-database/pinecone": "^5.1.2",
+    "@xyflow/react": "^12.8.3",
+    "axios": "^1.11.0",
+    "inngest": "^3.40.1",
+    "lucide-react": "^0.539.0",
+    "mongoose": "^8.17.1",
+    "motion": "^12.23.12",
+    "next": "15.4.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.5"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
