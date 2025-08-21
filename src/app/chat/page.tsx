@@ -23,6 +23,7 @@ const ChatPage: React.FC = () => {
   ]);
 
   const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<
     {
       id: number;
@@ -39,10 +40,21 @@ const ChatPage: React.FC = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Loading animation component
+  const LoadingDots = () => (
+    <div className="flex items-center space-x-1">
+      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+      <span className="text-sm text-gray-500 ml-2">AI is thinking...</span>
+    </div>
+  );
+
   const handleSendMessage = async () => {
     if (inputMessage.trim()) {
       setMessages((prev) => [...prev, { role: "user", content: inputMessage }]);
       setInputMessage("");
+      setIsLoading(true);
       console.log(inputMessage);
       console.log(repoUrl);
       try {
@@ -53,10 +65,15 @@ const ChatPage: React.FC = () => {
         console.log(respone);
         console.log(respone.data.data);
         if (respone?.data?.success) {
-          setMessages((prev) => [...prev, respone.data.data]);
+          setMessages((prev) => [...prev, {
+            role: "assistant",
+            content: respone?.data?.data?.output,
+          },]);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -219,6 +236,22 @@ const ChatPage: React.FC = () => {
                 </div>
               </div>
             ))}
+            
+            {/* Loading Animation */}
+            {isLoading && (
+              <div className="flex justify-start mb-4">
+                <div
+                  className={`max-w-[75%] p-3 rounded-xl shadow-md transition-colors duration-300 ${
+                    isDark
+                      ? "bg-gray-700 text-gray-100 rounded-bl-none"
+                      : "bg-gray-200 text-gray-800 rounded-bl-none"
+                  }`}
+                >
+                  <LoadingDots />
+                </div>
+              </div>
+            )}
+            
             <div ref={messagesEndRef} />
           </div>
 

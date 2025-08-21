@@ -5,10 +5,10 @@ export interface IAnalyzedRepo extends Document {
   owner?:string,
   users?: string[];        
   embeddingsProcessed?: boolean;   
-  metadata?: Record<string, any>;
+  metadata?:string;
   createdAt: Date;
   updatedAt: Date;
-  likes?:Number
+  likes?:number
 }
 
 const analyzedRepoSchema = new Schema<IAnalyzedRepo>({
@@ -16,7 +16,7 @@ const analyzedRepoSchema = new Schema<IAnalyzedRepo>({
   repoUrl: { type: String, required: true, unique: true },
   users: [{ type: String }],
   embeddingsProcessed: { type: Boolean, default: false },
-  metadata: { type: Schema.Types.Mixed },
+  metadata: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

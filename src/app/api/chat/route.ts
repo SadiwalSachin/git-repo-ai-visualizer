@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import resolveUserQuery from "@/helper/resolve-user-query";
+import { routerWorkFlow } from "@/graph/run-query";
 
 
 export async function POST(request: NextRequest) {
@@ -7,11 +7,10 @@ export async function POST(request: NextRequest) {
     const { userQuery,repoUrl } = await request.json();
 
     console.log(userQuery,repoUrl);
-    
 
-    // const data = await resolveUserQuery({userQuery,url:repoUrl})
+    const data = await routerWorkFlow.invoke({input:userQuery,url:repoUrl})
 
-    const data = await resolveUserQuery({userQuery,url:repoUrl})
+    console.log("data coming from the langgraph code",data);
 
     console.log(data);
     if (data) {

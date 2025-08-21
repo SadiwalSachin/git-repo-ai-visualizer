@@ -13,8 +13,6 @@ export default async function dbConnection():Promise<void>{
             return
         }
 
-        console.log(process.env.MONGODB_URI)
-
         const db = await mongoose.connect(`${process.env.MONGODB_URI}/${process.env.MONGODB_USERNAME}` || "")
 
         connection.isConnected = db.connections[0].readyState

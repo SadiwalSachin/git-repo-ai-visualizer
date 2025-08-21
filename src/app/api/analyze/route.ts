@@ -6,6 +6,14 @@ import { AnalyzedRepoModel } from "@/models/repo.model";
 import dbConnection from "@/lib/db-connect";
 import { auth } from "@clerk/nextjs/server";
 
+interface allFilesAndFolders {
+  path: string;
+  type: string;
+  sha: string;
+  size: number | null;
+  url: string | undefined;
+}
+
 export async function POST(request: NextRequest) {
   await dbConnection();
   try {

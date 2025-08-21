@@ -3,7 +3,16 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-async function getRepoDiagrams(repoDetails:any) {
+interface allFilesAndFolders {
+  path: string;
+  type: string;
+  sha: string;
+  size: number | null;
+  url: string | undefined;
+}
+
+
+async function getRepoDiagrams(repoDetails:allFilesAndFolders[]) {
 
     const PROMPT = `
     You are given repository details in JSON or structured text format.

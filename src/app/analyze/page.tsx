@@ -12,7 +12,7 @@ import Loader from "@/components/ui/loader";
 const DiagramPage: React.FC = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const {nodeData,setNodeData} = useReactFlowData()
+  const {nodeData,setNodeData,repoInfo,setRepoInfo} = useReactFlowData()
   const {repoUrl} = useReactFlowData()
   const [loading,setLoading] = useState(false)
 
@@ -22,8 +22,10 @@ const DiagramPage: React.FC = () => {
         try {
           setLoading(true);
           const response = await axios.post("/api/analyze", { url: repoUrl });
+          console.log(response);
           if (response?.data?.success) {
-            setNodeData(response.data);
+            setNodeData({nodes:response?.data?.parsedData?.nodes,edges:response?.data?.parsedData?.edges});
+            setRepoInfo({owner:response?.data?.owner,repoName:response?.data?.repoName})
           }
         } catch (error) {
           console.error(error);
@@ -74,7 +76,7 @@ const DiagramPage: React.FC = () => {
               ${isDark ? "text-blue-400" : "text-blue-600"}
             `}
           >
-            {nodeData?.owner} {nodeData?.repoName}
+            {repoInfo?.owner} {repoInfo?.repoName}
           </Link>
         </p>
 

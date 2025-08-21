@@ -7,9 +7,6 @@ export const extractReposFileCode = inngest.createFunction(
   { event: "extract/file-code" },
   async ({ event, step }) => {
     const { repoUrl, file, owner, repo } = event.data;
-
-    console.log("Fetching file content for:", file.path);
-
     try {
       const { data } = await octokit.repos.getContent({
         owner,
@@ -26,13 +23,7 @@ export const extractReposFileCode = inngest.createFunction(
       } else if (Array.isArray(data)) {
         console.warn("Path is a directory, not a file:", file.path);
       }
-
-      console.log("adding docs started");
-
       const response  = await storeEmbeddings({content:fileContent,path:file.path,repoUrl})
-
-      console.log(response);
-      
       // You can now store fileContent or return it
       return { path: file.path, content: fileContent , repoUrl };
     } catch (error) {

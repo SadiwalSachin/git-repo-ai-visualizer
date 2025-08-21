@@ -8,28 +8,36 @@ import { useRouter } from "next/navigation";
 import { useReactFlowData } from "@/context/react-flow-data-context";
 import Loader from "@/components/ui/loader";
 import { useTheme } from "@/context/theme-context";
-import { useUser } from "@clerk/nextjs";
+import { RedirectToSignIn, useClerk, useUser } from "@clerk/nextjs";
 
 const LandingPage: React.FC = () => {
   const [repoLink, setRepoLink] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { setNodeData ,setRepoUrl } = useReactFlowData();
+  const { setNodeData, setRepoUrl } = useReactFlowData();
   const router = useRouter();
   const { theme } = useTheme();
   const { isSignedIn } = useUser();
+  const {redirectToSignIn} = useClerk()
 
   const isDark = theme === "dark";
 
   const handleSubmit = async (): Promise<void> => {
+    if(!isSignedIn){
+      redirectToSignIn()
+      return
+    }
     if (!repoLink.trim()) return;
     try {
-      setRepoUrl(repoLink)
+      setRepoUrl(repoLink);
       setLoading(true);
       const response = await axios.post("/api/analyze", {
         url: repoLink,
       });
       if (response?.data?.success) {
-        setNodeData(response.data);
+        setNodeData({
+          nodes: response.data.parsedData.nodes,
+          edges: response.data.parsedData.edges,
+        });
         router.push("/analyze");
       }
     } catch (error) {
@@ -68,7 +76,13 @@ const LandingPage: React.FC = () => {
             the code.
           </p>
           <div className="grid md:grid-cols-3 gap-6 text-left">
-            <div className={`p-6 bg-blue rounded-2xl shadow-lg border border-gray-200 ${isDark ? "bg-gray-800" : "bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900"}`}>
+            <div
+              className={`p-6 bg-blue rounded-2xl shadow-lg border border-gray-200 ${
+                isDark
+                  ? "bg-gray-800"
+                  : "bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900"
+              }`}
+            >
               <h3 className="font-semibold text-xl mb-2">
                 📊 Visualize Structure
               </h3>
@@ -77,13 +91,25 @@ const LandingPage: React.FC = () => {
                 understanding.
               </p>
             </div>
-            <div className={`p-6 bg-blue rounded-2xl shadow-lg border border-gray-200 ${isDark ? "bg-gray-800" : "bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900"}`}>
+            <div
+              className={`p-6 bg-blue rounded-2xl shadow-lg border border-gray-200 ${
+                isDark
+                  ? "bg-gray-800"
+                  : "bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900"
+              }`}
+            >
               <h3 className="font-semibold text-xl mb-2">💬 Chat with Code</h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Ask AI questions about the repository like a real teammate.
               </p>
             </div>
-            <div className={`p-6 bg-blue rounded-2xl shadow-lg border border-gray-200 ${isDark ? "bg-gray-800" : "bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900"}`}>
+            <div
+              className={`p-6 bg-blue rounded-2xl shadow-lg border border-gray-200 ${
+                isDark
+                  ? "bg-gray-800"
+                  : "bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900"
+              }`}
+            >
               <h3 className="font-semibold text-xl mb-2">⚡ Quick Insights</h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Save hours by instantly understanding dependencies & functions.
@@ -114,7 +140,7 @@ const LandingPage: React.FC = () => {
               }`}
             />
             <button
-            disabled={!isSignedIn}
+              disabled={isSignedIn && !(repoLink?.length>0)}
               onClick={handleSubmit}
               className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl focus:ring-blue-500"
             >

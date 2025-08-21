@@ -5,70 +5,68 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { useTheme } from "@/context/theme-context";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useClerk, SignOutButton } from "@clerk/nextjs";
 import ProfileSkeleton from "@/components/shemer-skeleton/profile";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useReactFlowData } from "@/context/react-flow-data-context";
 
 interface Repo {
-  owner:string,
-  _id:string,
-  repoUrl:string
+  owner: string;
+  _id: string;
+  repoUrl: string;
 }
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
   const { isSignedIn, user, isLoaded } = useUser();
-  const {setRepoUrl} = useReactFlowData()
+  const { signOut } = useClerk();
+  const { setRepoUrl } = useReactFlowData();
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  console.log(user);
-  
   const [loading, setLoading] = useState(true);
   const [usersViewedRepo, setUsersViewedRepo] = useState<Repo[]>([]);
 
-  function viewRepoDiagram(url:string){
-    setRepoUrl(url)
-    router.push("/analyze")
+  function viewRepoDiagram(url: string) {
+    setRepoUrl(url);
+    router.push("/analyze");
   }
 
-  function chatWithRepo(url:string){
-    setRepoUrl(url)
-    router.push("/chat")
+  function chatWithRepo(url: string) {
+    setRepoUrl(url);
+    router.push("/chat");
   }
 
-useEffect(() => {
-  if (!isSignedIn && isLoaded) {
-    router.push("/");
-  }
-}, [isSignedIn, isLoaded]);
+  useEffect(() => {
+    if (!isSignedIn && isLoaded) {
+      router.push("/");
+    }
+  }, [isSignedIn, isLoaded]);
 
-useEffect(() => {
-  if (isSignedIn) {
-    const fetchUserViewedRepo = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.post("/api/viewed-repos",{userID:user?.id});
-        console.log("response",response);
-        if (response?.data?.success) {
-          setUsersViewedRepo(response.data.data);
+  useEffect(() => {
+    if (isSignedIn) {
+      const fetchUserViewedRepo = async () => {
+        setLoading(true);
+        try {
+          const response = await axios.post("/api/viewed-repos", {
+            userID: user?.id,
+          });
+          if (response?.data?.success) {
+            setUsersViewedRepo(response.data.data);
+          }
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchUserViewedRepo();
-  }
-}, [isSignedIn]);
+      fetchUserViewedRepo();
+    }
+  }, [isSignedIn]);
 
-if (!isLoaded || loading) return <ProfileSkeleton />;
-
-
+  if (!isLoaded || loading) return <ProfileSkeleton />;
 
   return (
     <>
@@ -88,7 +86,7 @@ if (!isLoaded || loading) return <ProfileSkeleton />;
         >
           {/* Profile Header */}
           <div
-            className={`flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b pb-6 transition-colors duration-300
+            className={`flex flex-col sm:flex-row justify-between items-center sm:items-start gap-6 border-b pb-6 transition-colors duration-300
               ${isDark ? "border-gray-700" : "border-gray-200"}
             `}
           >
@@ -105,7 +103,7 @@ if (!isLoaded || loading) return <ProfileSkeleton />;
                   isDark ? "text-gray-400" : "text-gray-600"
                 }`}
               >
-               {user?.emailAddresses[0]?.emailAddress}
+                {user?.emailAddresses[0]?.emailAddress}
               </p>
               <p
                 className={`text-sm transition-colors duration-300 ${
@@ -115,6 +113,15 @@ if (!isLoaded || loading) return <ProfileSkeleton />;
                 Joined {user?.createdAt?.toDateString()}
               </p>
             </div>
+
+            {/* Logout Button */}
+            <SignOutButton>
+            <h2
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl focus:ring-blue-500 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              >
+              🚪 Logout
+            </h2>
+              </SignOutButton>
           </div>
 
           {/* Repositories Section */}
@@ -138,7 +145,9 @@ if (!isLoaded || loading) return <ProfileSkeleton />;
                     }
                   `}
                 >
-                  <h3 className="text-lg font-semibold break-words">{repo?.owner}</h3>
+                  <h3 className="text-lg font-semibold break-words">
+                    {repo?.owner}
+                  </h3>
                   <Link
                     href={repo?.repoUrl}
                     target="_blank"
@@ -150,10 +159,10 @@ if (!isLoaded || loading) return <ProfileSkeleton />;
                     {repo?.repoUrl}
                   </Link>
                   <div className="flex gap-2 mt-4">
-                    <div onClick={()=>viewRepoDiagram(repo?.repoUrl)}>
+                    <div onClick={() => viewRepoDiagram(repo?.repoUrl)}>
                       <SleekButton className="text-sm px-3 py-1">View</SleekButton>
                     </div>
-                    <div onClick={()=>chatWithRepo(repo?.repoUrl)}>
+                    <div onClick={() => chatWithRepo(repo?.repoUrl)}>
                       <SleekButton primary className="text-sm px-3 py-1">
                         Ask AI
                       </SleekButton>

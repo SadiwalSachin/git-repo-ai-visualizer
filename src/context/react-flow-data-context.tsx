@@ -2,22 +2,41 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
+interface nodeData {
+  nodes:[],
+  edges:[]
+}
+
+interface repoInfo {
+  owner:string,
+  repoName:string
+}
+
 // Define types for context
 interface ReactFlowDataContextType {
-  nodeData: any;
-  setNodeData: React.Dispatch<React.SetStateAction<any>>;
+  nodeData: {
+    nodes:[],
+    edges:[]
+  };
+  setNodeData: React.Dispatch<React.SetStateAction<nodeData>>;
   repoUrl:string,
   setRepoUrl:React.Dispatch<React.SetStateAction<string>>
+  repoInfo:{
+    owner:string,
+    repoName:string
+  }
+  setRepoInfo:React.Dispatch<React.SetStateAction<repoInfo>>
 }
 
 const ReactFlowDataContext = createContext<ReactFlowDataContextType | undefined>(undefined);
 
 export const ReactFlowDataContextProvider = ({ children }: { children: ReactNode }) => {
-  const [nodeData, setNodeData] = useState<any>({nodes:[],edges:[]}); 
+  const [nodeData, setNodeData] = useState<nodeData>({nodes:[],edges:[]}); 
   const [repoUrl,setRepoUrl] = useState<string>("")
+  const [repoInfo,setRepoInfo] = useState<repoInfo>({owner:"",repoName:""})
 
   return (
-    <ReactFlowDataContext.Provider value={{ nodeData, setNodeData,repoUrl,setRepoUrl }}>
+    <ReactFlowDataContext.Provider value={{ nodeData, setNodeData,repoUrl,setRepoUrl,repoInfo,setRepoInfo }}>
       {children}
     </ReactFlowDataContext.Provider>
   );

@@ -3,13 +3,8 @@ import { octokit } from "./github-client";
 async function getAllRepoFiles(url: string) {
   try {
     const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)(?:\/|$)/);
-
     const owner = match?.[1];
     const repo = match?.[2].replace(/\.git$/, "");
-
-    console.log(`URL coming from frontend: ${url}`);
-    console.log("Owner:", owner, "Repo:", repo);
-
     // Get reference to main branch (fallback to master if main doesn’t exist)
     let ref;
     try {
@@ -62,9 +57,6 @@ async function getAllRepoFiles(url: string) {
         size: item.size ?? null,
         url: item.url,
       }));
-
-    console.log("Filtered Code Files:", codeFiles);
-
     return {owner,repo,codeFiles};
   } catch (error) {
     console.error("Error fetching repo details:", error);
