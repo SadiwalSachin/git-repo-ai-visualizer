@@ -6,11 +6,11 @@ export async function POST(request: NextRequest) {
   try {
     const { userQuery,repoUrl } = await request.json();
 
-    console.log(userQuery,repoUrl);
+    // console.log(userQuery,repoUrl);
 
     const data = await routerWorkFlow.invoke({input:userQuery,url:repoUrl})
 
-    console.log("data coming from the langgraph code",data);
+    // console.log("data coming from the langgraph code",data);
 
     console.log(data);
     if (data) {

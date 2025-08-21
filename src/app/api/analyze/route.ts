@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      console.log("User id not found");
+      // console.log("User id not found");
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!url) {
-      console.log("URL not found");
+      // console.log("URL not found");
       return NextResponse.json(
         { success: false, message: "Provide URL" },
         { status: 401 }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (repo) {
       if (!repo.embeddingsProcessed) {
-        await inngest.send({
+        inngest.send({
           name: "extract/repo-files",
           data: { repoUrl: url },
         });
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         embeddingsProcessed: false,
       });
 
-      await inngest.send({
+      inngest.send({
         name: "extract/repo-files",
         data: { repoUrl: url },
       });

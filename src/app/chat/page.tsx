@@ -280,12 +280,12 @@ const ChatPage: React.FC = () => {
         </div>
 
         {/* Floating Mobile History Button */}
-        <button
+        {/* <button
           className="fixed bottom-6 right-6 md:hidden px-4 py-2 rounded-full shadow-lg bg-blue-600 text-white hover:bg-blue-700 transition-all"
           onClick={() => setShowHistory(true)}
         >
           History
-        </button>
+        </button> */}
 
         {/* Custom Scrollbar */}
         <style jsx>{`
